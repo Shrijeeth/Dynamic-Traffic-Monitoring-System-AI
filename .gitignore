@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Files
+*.env
+service-account.json
+service-account-test.json
+
+# Code Editor Files
+.vscode/
+.idea/
+
+# Coverage Files
+*.coverage
+coverage/
+
+venv/
