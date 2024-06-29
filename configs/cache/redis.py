@@ -2,6 +2,7 @@
 Redis Module for cache
 """
 
+from fastapi import FastAPI
 from redis.asyncio import ConnectionPool, Redis
 from configs.config import get_settings
 
@@ -54,31 +55,33 @@ async def cleanup_redis(client: Redis, pool: ConnectionPool) -> None:
         await pool.aclose()
 
 
-async def set_cache(client: Redis, key: str, value: str) -> None:
+async def set_cache(app: FastAPI, key: str, value: str) -> None:
     """
     Set cache data in Redis
 
     Args:
-        client: Redis Asynchronous client
+        app: FastAPI application instance
         key: Cache key
         value: Cache value
     """
+    client: Redis = app.state.redis_client
     async with client.pipeline(transaction=True) as pipe:
         await pipe.set(key, value)
         await pipe.execute()
 
 
-async def get_cache(client: Redis, key: str) -> str:
+async def get_cache(app: FastAPI, key: str) -> str:
     """
     Get cache data from Redis
 
     Args:
-        client: Redis Asynchronous client
+        app: FastAPI application instance
         key: Cache key
 
     Returns:
         data: Cache value
     """
+    client: Redis = app.state.redis_client
     async with client.pipeline(transaction=True) as pipe:
         await pipe.get(key)
         data = await pipe.execute()
