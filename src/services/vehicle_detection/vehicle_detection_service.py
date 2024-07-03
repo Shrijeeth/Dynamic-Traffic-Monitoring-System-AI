@@ -4,8 +4,8 @@ Vehicle Detection Service
 
 from fastapi import UploadFile
 
-from src.model_registry.vehicle_detection.yolov8_model_registry import (
-    YoloV8ModelRegistry,
+from src.model_registry.vehicle_detection.yolo_object_detection_model_registry import (
+    YoloObjectDetectionModelRegistry,
 )
 from src.utils.utils import run_in_process
 from src.utils.vehicle_detection.constants import YOLOV8_VEHICLE_CLASSES
@@ -26,7 +26,7 @@ async def detect_vehicles(images: list[UploadFile]) -> list:
         List of dictionaries containing information about the detected vehicles.
     """
     # Initialize the YoloV8 model registry
-    model = YoloV8ModelRegistry(version="l")
+    model = YoloObjectDetectionModelRegistry()
 
     # Load the YoloV8 model
     model_obj = model.load_model()
