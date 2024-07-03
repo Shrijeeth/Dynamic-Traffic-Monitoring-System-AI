@@ -2,7 +2,7 @@ install:
 	python -m pip install -r requirements.txt
 
 lint:
-	python -m pylint $(shell git ls-files --modified --others '*.py')
+	python -m pylint $(shell git ls-files '*.py')
 
 auto-lint:
 	python -m black --safe $(shell git ls-files --modified --others '*.py')
