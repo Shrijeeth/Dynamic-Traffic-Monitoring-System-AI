@@ -11,7 +11,7 @@ from PIL import Image
 from src.utils.utils import run_in_thread
 
 
-def get_results_from_yolo(result: Results, filename: str) -> dict:
+def get_results_from_yolo(result: Results, filename: str, classes: list) -> dict:
     """
     This function takes in a YOLO result and a filename, and returns a dictionary
     containing the filename and a list of predictions. Each prediction is a dictionary
@@ -36,7 +36,7 @@ def get_results_from_yolo(result: Results, filename: str) -> dict:
     ):
         # Make a prediction dictionary
         prediction = {
-            "class": cls,  # The class of the object
+            "class": classes[cls],  # The class of the object
             "score": conf,  # The confidence score of the object
             "box": box,  # The bounding box of the object
         }

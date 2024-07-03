@@ -8,6 +8,7 @@ from src.model_registry.vehicle_detection.yolov8_model_registry import (
     YoloV8ModelRegistry,
 )
 from src.utils.utils import run_in_process
+from src.utils.vehicle_detection.constants import YOLOV8_VEHICLE_CLASSES
 from src.utils.vehicle_detection.utils import (
     convert_files_to_numpy_arrays,
     get_results_from_yolo,
@@ -36,7 +37,9 @@ async def detect_vehicles(images: list[UploadFile]) -> list:
     image_data = list(processed_images.values())
 
     # Predict on the image data using the YoloV8 model
-    preds = await run_in_process(model_obj.predict, image_data)
+    preds = await run_in_process(
+        model_obj.predict, image_data, classes=YOLOV8_VEHICLE_CLASSES
+    )
 
     # Create a dictionary to store the results
     results = {}
@@ -57,7 +60,9 @@ async def detect_vehicles(images: list[UploadFile]) -> list:
         # If an image is found, append the result to the response list
         if image:
             # Get the results from the Yolo prediction
-            response.append(get_results_from_yolo(result, image.filename))
+            response.append(
+                get_results_from_yolo(result, image.filename, model_obj.names)
+            )
 
     # Return the list of results
     return response
