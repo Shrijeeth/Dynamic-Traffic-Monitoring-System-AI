@@ -1,4 +1,4 @@
-# pylint: disable=bad-mcs-method-argument
+# pylint: disable=bad-mcs-method-argument,too-few-public-methods
 
 """
 Module that defines the base model registry for AI models.
@@ -7,7 +7,7 @@ Module that defines the base model registry for AI models.
 import abc
 
 
-class BaseModelRegistry(abc.ABCMeta):
+class BaseModelRegistry(metaclass=abc.ABCMeta):
     """
     A class that defines the base ai model registry.
     """

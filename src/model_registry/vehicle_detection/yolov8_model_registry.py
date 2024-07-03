@@ -1,4 +1,4 @@
-# pylint: disable=bad-mcs-method-argument
+# pylint: disable=bad-mcs-method-argument,too-few-public-methods
 
 """
 Module that defines the model registry for YoloV8.
@@ -19,8 +19,16 @@ class YoloV8ModelRegistry(BaseModelRegistry):
 
     def load_model(self):
         """
-        A method to load yolov8 model.
+        Load the YOLOv8 model.
+
+        Returns:
+            YOLO: The loaded YOLOv8 model.
         """
+        # Construct the model name by appending the version to 'yolov8'
         model_name = "yolov8" + self.version + ".pt"
+
+        # Load the YOLOv8 model using the specified model name
         model = YOLO(model_name)
+
+        # Return the loaded model
         return model
