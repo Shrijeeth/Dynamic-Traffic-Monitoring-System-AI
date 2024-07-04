@@ -8,7 +8,7 @@ auto-lint:
 	python -m black --safe $(shell git ls-files --modified --others '*.py')
 
 run:
-	python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+	python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000 & python -m celery -A worker.worker worker --loglevel=info & wait
 
 test:
 	ENVIRONMENT=test python -m pytest -v -p no:warnings

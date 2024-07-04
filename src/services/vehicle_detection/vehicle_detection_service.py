@@ -2,11 +2,17 @@
 Vehicle Detection Service
 """
 
+from typing import Optional
 from fastapi import UploadFile
 
+from worker import worker
+from configs.config import get_settings
 from src.model_registry.vehicle_detection.yolo_object_detection_model_registry import (
     YoloObjectDetectionModelRegistry,
 )
+from src.schemas.vehicle_detection import VehicleDetectionInput
+from src.services.notification.notification_service import notify
+from src.utils.notification.types import EmailTemplate
 from src.utils.utils import run_in_process
 from src.utils.vehicle_detection.constants import YOLOV8_VEHICLE_CLASSES
 from src.utils.vehicle_detection.utils import (
@@ -15,7 +21,8 @@ from src.utils.vehicle_detection.utils import (
 )
 
 
-async def detect_vehicles(images: list[UploadFile]) -> list:
+@worker.task(name="detect_vehicles")
+async def detect_vehicles(images: list[dict], request: Optional[VehicleDetectionInput] = None) -> list:
     """
     Detect vehicles in a list of images.
 
@@ -64,5 +71,17 @@ async def detect_vehicles(images: list[UploadFile]) -> list:
                 get_results_from_yolo(result, image.filename, model_obj.names)
             )
 
+    if request:
+         notification_data = {
+              "template": EmailTemplate.VEHICLE_DETECTION.value,
+              "from_mail": get_settings().SMTP_USERNAME,
+              "message": {"result": response},
+              "to_mail": request.notification_addresses,
+              "subject": "Vehicle Detection Results",
+         }
+         task = notify.delay(notification_data, request.notify_to.value)
+         return {"data": {
+              "task_id": task.id
+         }}
     # Return the list of results
     return response
